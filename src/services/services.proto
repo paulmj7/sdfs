@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package services;
+
+option go_package = "sdfs/services";
+
+message RegisterRequest {
+    string url = 1;
+}
+
+message RegisterResponse {
+    string status = 1;
+}
+
+message WriteRequest {
+    string name = 1;
+    bytes data = 2;
+}
+
+message WriteResponse {
+    string status = 1;
+}
+
+message ReadRequest {
+    string name = 1;
+}
+
+message ReadResponse {
+    bytes data = 1;
+}
+
+service DirectoryService {
+    rpc Register(RegisterRequest) returns (RegisterResponse) {}
+}
+
+service StorageService {
+    rpc Read(ReadRequest) returns (ReadResponse) {}
+    rpc Write(WriteRequest) returns (WriteResponse) {}
+}

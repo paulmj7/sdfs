@@ -1,32 +1,39 @@
 package lib
 
 import (
-	"errors"
-	"fmt"
+	"log"
+	"net/url"
 )
 
-type Args struct {
-	A, B int
+type StorageServers struct {
+	servers []url.URL
 }
 
-type Quotient struct {
-	Quo, Rem int
-}
-
-type Arith int
-
-func (t *Arith) Multiply(args *Args, reply *int) error {
-	*reply = args.A * args.B
-	fmt.Println("Hello from client")
-	return nil
-}
-
-func (t *Arith) Divide(args *Args, quo *Quotient) error {
-	if args.B == 0 {
-		return errors.New("divide by zero")
+func (ss *StorageServers) Add(server string) {
+	url, err := url.Parse(server)
+	if err != nil {
+		log.Fatal("storage server url not valid: ", err)
 	}
-
-	quo.Quo = args.A / args.B
-	quo.Rem = args.A % args.B
-	return nil
+	ss.servers = append(ss.servers, *url)
 }
+
+func (ss *StorageServers) PrintDirectory() {
+	for i, s := range ss.servers {
+		log.Println(i, s.String())
+	}
+}
+
+type DFile struct {
+	Chunks   []Chunk
+	FileSize int
+	Len      int
+}
+
+type Chunk struct {
+	Location        url.URL
+	BackupLocations []url.URL
+	ChunkSize       int
+}
+
+var Lookup map[string]DFile
+var Directory StorageServers

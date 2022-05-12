@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net"
 	"sdfs/services"
 
 	"golang.org/x/net/context"
@@ -18,10 +20,25 @@ func main() {
 
 	dir := services.NewDirectoryServiceClient(conn)
 
-	response, err := dir.Register(context.Background(), &services.RegisterRequest{Url: "Hello From Client!"})
+	response, err := dir.Register(context.Background(), &services.RegisterRequest{Url: "http://127.0.0.1:9001"})
 	if err != nil {
 		log.Fatal("Error when calling Register: ", err)
 	}
 
 	log.Println("Response from server: ", response.Status)
+
+	conn.Close()
+
+	listener, err := net.Listen("tcp", ":9001")
+	if err != nil {
+		log.Fatal("listen error: ", err)
+	}
+	s := services.StorageServer{}
+	gRPCServer := grpc.NewServer(grpc.MaxRecvMsgSize(64000017))
+	services.RegisterStorageServiceServer(gRPCServer, &s)
+	fmt.Println("Listening on 9001")
+	err = gRPCServer.Serve(listener)
+	if err != nil {
+		log.Fatal("serve error: ", err)
+	}
 }

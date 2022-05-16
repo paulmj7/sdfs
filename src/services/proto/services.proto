@@ -1,8 +1,13 @@
 syntax = "proto3";
 
-package services;
+package proto;
 
-option go_package = "sdfs/services";
+option go_package = "sdfs/services/proto";
+
+message ReadChunk {
+    string name = 1;
+    string location = 2;
+}
 
 message RegisterRequest {
     string url = 1;
@@ -10,6 +15,23 @@ message RegisterRequest {
 
 message RegisterResponse {
     string status = 1;
+}
+
+message LookupRequest {
+    string name = 1;
+}
+
+message LookupResponse {
+    repeated ReadChunk readChunks = 1;
+}
+
+message CreateRequest {
+    string name = 1;
+    uint64 size = 2;
+}
+
+message CreateResponse {
+    repeated string locations = 1;
 }
 
 message WriteRequest {
@@ -31,6 +53,8 @@ message ReadResponse {
 
 service DirectoryService {
     rpc Register(RegisterRequest) returns (RegisterResponse) {}
+    rpc Create(CreateRequest) returns (CreateResponse) {}
+    rpc Lookup(LookupRequest) returns (LookupResponse) {}
 }
 
 service StorageService {

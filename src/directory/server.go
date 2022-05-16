@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"sdfs/services"
+	"sdfs/services/proto"
 
 	"google.golang.org/grpc"
 )
@@ -17,7 +18,7 @@ func main() {
 
 	s := services.DirectoryServer{}
 	gRPCServer := grpc.NewServer()
-	services.RegisterDirectoryServiceServer(gRPCServer, &s)
+	proto.RegisterDirectoryServiceServer(gRPCServer, &s)
 	fmt.Println("Listening on 9000")
 	err = gRPCServer.Serve(listener)
 	if err != nil {

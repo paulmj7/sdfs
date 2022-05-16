@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"sdfs/services"
+	"sdfs/services/proto"
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -18,9 +19,9 @@ func main() {
 	}
 	defer conn.Close()
 
-	dir := services.NewDirectoryServiceClient(conn)
+	dir := proto.NewDirectoryServiceClient(conn)
 
-	response, err := dir.Register(context.Background(), &services.RegisterRequest{Url: "http://127.0.0.1:9001"})
+	response, err := dir.Register(context.Background(), &proto.RegisterRequest{Url: "http://127.0.0.1:9001"})
 	if err != nil {
 		log.Fatal("Error when calling Register: ", err)
 	}
@@ -34,8 +35,8 @@ func main() {
 		log.Fatal("listen error: ", err)
 	}
 	s := services.StorageServer{}
-	gRPCServer := grpc.NewServer(grpc.MaxRecvMsgSize(64000017))
-	services.RegisterStorageServiceServer(gRPCServer, &s)
+	gRPCServer := grpc.NewServer(grpc.MaxRecvMsgSize(64000017), grpc.MaxSendMsgSize(64000005))
+	proto.RegisterStorageServiceServer(gRPCServer, &s)
 	fmt.Println("Listening on 9001")
 	err = gRPCServer.Serve(listener)
 	if err != nil {

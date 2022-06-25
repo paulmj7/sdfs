@@ -1,2 +1,2 @@
-src/services/*.pb.go
+src/services/pb/*.pb.go
 .DS_Store

@@ -10,14 +10,17 @@ import (
 	"golang.org/x/net/context"
 )
 
+// DirectoryServer struct
 type DirectoryServer struct {
 	pb.UnimplementedDirectoryServiceServer
 }
 
+// StorageServer struct
 type StorageServer struct {
 	pb.UnimplementedStorageServiceServer
 }
 
+// Register a storage server to the directory server
 func (s *DirectoryServer) Register(ctx context.Context, in *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	log.Println("Recieve message body from client: ", in.Url)
 	lib.Directory.Add(in.Url)
@@ -25,6 +28,7 @@ func (s *DirectoryServer) Register(ctx context.Context, in *pb.RegisterRequest) 
 	return &pb.RegisterResponse{Status: "Hello From the Server!"}, nil
 }
 
+// Create a file to the directory server
 func (s *DirectoryServer) Create(ctx context.Context, in *pb.CreateRequest) (*pb.CreateResponse, error) {
 	log.Println("Receive message body from client: ", in.Name, in.Size)
 	locations, err := lib.Create(in.Name, in.Size)
@@ -34,6 +38,7 @@ func (s *DirectoryServer) Create(ctx context.Context, in *pb.CreateRequest) (*pb
 	return &pb.CreateResponse{Locations: locations}, nil
 }
 
+// Lookup chunk locations of a file
 func (s *DirectoryServer) Lookup(ctx context.Context, in *pb.LookupRequest) (*pb.LookupResponse, error) {
 	log.Println("Receive message body from client: ", in.Name)
 	chunks, err := lib.Search(in.Name)
@@ -43,6 +48,7 @@ func (s *DirectoryServer) Lookup(ctx context.Context, in *pb.LookupRequest) (*pb
 	return &pb.LookupResponse{ReadChunks: chunks}, nil
 }
 
+// Read chunks of a file
 func (s *StorageServer) Read(ctx context.Context, in *pb.ReadRequest) (*pb.ReadResponse, error) {
 	log.Println("Hello from the client: ", in.Name)
 	chunk, err := storage_util.Read(in.Name)
@@ -52,6 +58,7 @@ func (s *StorageServer) Read(ctx context.Context, in *pb.ReadRequest) (*pb.ReadR
 	return &pb.ReadResponse{Data: chunk}, nil
 }
 
+// Write chunks to a file
 func (s *StorageServer) Write(stream pb.StorageService_WriteServer) error {
 	log.Println("Hello From the client")
 	for {

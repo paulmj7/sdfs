@@ -12,10 +12,12 @@ import (
 	"strconv"
 )
 
+// StorageServers struct
 type StorageServers struct {
 	servers []url.URL
 }
 
+// Add storage server to directory
 func (ss *StorageServers) Add(server string) {
 	url, err := url.Parse(server)
 	if err != nil {
@@ -24,16 +26,19 @@ func (ss *StorageServers) Add(server string) {
 	ss.servers = append(ss.servers, *url)
 }
 
+// Size of StorageServers struct
 func (ss *StorageServers) Size() int {
 	return len(ss.servers)
 }
 
+// PrintDirectory prints contents of StorageServers
 func (ss *StorageServers) PrintDirectory() {
 	for i, s := range ss.servers {
 		log.Println(i, s.String())
 	}
 }
 
+// Create chunk mappings for file
 func Create(fileName string, fileSize uint64) ([]string, error) {
 	numFiles := int(math.Ceil(float64(fileSize) / 64000000))
 	remainder := fileSize % 64000000
@@ -69,6 +74,7 @@ func location() url.URL {
 	panic("error getting location")
 }
 
+// Search file in directory
 func Search(fileName string) ([]*pb.ReadChunk, error) {
 	f, exists := Lookup[fileName]
 	if !exists {
@@ -85,12 +91,14 @@ func Search(fileName string) ([]*pb.ReadChunk, error) {
 	return chunks, nil
 }
 
+// DFile struct
 type DFile struct {
 	Chunks   []Chunk
 	FileSize uint64
 	Len      int
 }
 
+// Chunk struct
 type Chunk struct {
 	Name            string
 	Location        url.URL
@@ -98,5 +106,8 @@ type Chunk struct {
 	ChunkSize       uint64
 }
 
+// Lookup map
 var Lookup = map[string]DFile{}
+
+// Directory object
 var Directory StorageServers

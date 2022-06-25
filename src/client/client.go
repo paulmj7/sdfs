@@ -15,8 +15,6 @@ func main() {
 	if len(os.Args) == 2 && command == "ls" {
 		client_util.Ls()
 		os.Exit(0)
-	} else {
-		log.Fatal("issue")
 	}
 
 	file := os.Args[2]

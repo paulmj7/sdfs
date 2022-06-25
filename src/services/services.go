@@ -48,6 +48,16 @@ func (s *DirectoryServer) Lookup(ctx context.Context, in *pb.LookupRequest) (*pb
 	return &pb.LookupResponse{ReadChunks: chunks}, nil
 }
 
+// Ls lists all files in directory
+func (s *DirectoryServer) Ls(ctx context.Context, in *pb.LsRequest) (*pb.LsResponse, error) {
+	log.Println("Receive message body from client")
+	names, err := lib.Ls()
+	if err != nil {
+		log.Fatal("error listing files: ", err)
+	}
+	return &pb.LsResponse{Names: names}, nil
+}
+
 // Read chunks of a file
 func (s *StorageServer) Read(ctx context.Context, in *pb.ReadRequest) (*pb.ReadResponse, error) {
 	log.Println("Hello from the client: ", in.Name)

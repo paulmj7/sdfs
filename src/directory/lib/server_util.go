@@ -91,6 +91,18 @@ func Search(fileName string) ([]*pb.ReadChunk, error) {
 	return chunks, nil
 }
 
+// Ls lists all files in directory
+func Ls() ([]string, error) {
+	names := make([]string, len(Lookup))
+	i := 0
+	for key := range Lookup {
+		names[i] = key
+		i++
+	}
+
+	return names, nil
+}
+
 // DFile struct
 type DFile struct {
 	Chunks   []Chunk

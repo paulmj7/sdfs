@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"crypto/sha1"
 	"encoding/hex"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -23,7 +24,16 @@ type storageClientWrapper struct {
 
 // Ls lists all files in directory
 func Ls() {
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	if err != nil {
+		log.Fatal("did not connect: ", err)
+	}
+	defer conn.Close()
 
+	directory := pb.NewDirectoryServiceClient(conn)
+	names, err := directory.Ls(context.Background(), nil)
+	fmt.Println(names)
 }
 
 // Create file in directory

@@ -8,7 +8,7 @@ import (
 	"log"
 	"math"
 	"net/url"
-	"sdfs/services/proto"
+	"sdfs/services/pb"
 	"strconv"
 )
 
@@ -69,17 +69,17 @@ func location() url.URL {
 	panic("error getting location")
 }
 
-func Search(fileName string) ([]*proto.ReadChunk, error) {
+func Search(fileName string) ([]*pb.ReadChunk, error) {
 	f, exists := Lookup[fileName]
 	if !exists {
 		log.Fatal("error finding file")
 		return nil, errors.New("error finding dfile")
 	}
-	chunks := []*proto.ReadChunk{}
+	chunks := []*pb.ReadChunk{}
 	for _, chunk := range f.Chunks {
 		name := chunk.Name
 		location := chunk.Location.Hostname() + ":" + chunk.Location.Port()
-		chunks = append(chunks, &proto.ReadChunk{Name: name, Location: location})
+		chunks = append(chunks, &pb.ReadChunk{Name: name, Location: location})
 	}
 
 	return chunks, nil

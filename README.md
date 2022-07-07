@@ -1,12 +1,12 @@
 # Simple Distributed File System
 
-Based on the Google File System [link will go here eventually]
+Inspired by the [Google File System](https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf).
 
 ## Usage
 
 ### Client
 
-bash```
+```bash
 sdfs ls # lists files in the system
 sdfs create largefile.mp4 # uploads large file into the system
 sdfs read largefile.mp4 > cat

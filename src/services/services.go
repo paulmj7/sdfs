@@ -84,7 +84,6 @@ func (s *StorageServer) Write(stream pb.StorageService_WriteServer) error {
 	log.Println("Hello From the client")
 	for {
 		in, err := stream.Recv()
-		log.Println("Hit")
 		if err == io.EOF {
 			break
 		} else if err != nil {

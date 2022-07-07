@@ -11,6 +11,7 @@ func Write(chunkName string, data []byte) {
 	if err != nil {
 		log.Fatal("error writing chunk: ", err)
 	}
+	log.Println(os.Getenv("ADDRESS") + ": wrote chunk")
 }
 
 // Read chunk from storage server

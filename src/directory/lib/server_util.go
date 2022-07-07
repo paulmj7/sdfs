@@ -54,7 +54,7 @@ func Create(fileName string, fileSize uint64) ([]string, error) {
 		if i+1 == numFiles {
 			chunkSize = remainder
 		}
-		location := location()
+		location := location(i)
 		io.WriteString(h, fileName+strconv.Itoa(i))
 		name := hex.EncodeToString(h.Sum(nil))[:10]
 		chunk := Chunk{Name: name, Location: location, BackupLocations: nil, ChunkSize: chunkSize}
@@ -70,9 +70,13 @@ func Create(fileName string, fileSize uint64) ([]string, error) {
 	return locations, nil
 }
 
-func location() url.URL {
+func location(i int) url.URL {
 	if Directory.Size() == 1 {
 		location := Directory.servers[0]
+		return location
+	} else {
+		n := Directory.Size()
+		location := Directory.servers[i%n]
 		return location
 	}
 	panic("error getting location")

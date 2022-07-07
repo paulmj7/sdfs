@@ -22,8 +22,8 @@ func main() {
 		client_util.Create(file)
 	} else if command == "read" {
 		client_util.Read(file)
-	} else if command == "ls" {
-		client_util.Ls()
+	} else if command == "rm" {
+		client_util.Rm(file)
 	}
 	os.Exit(0)
 }

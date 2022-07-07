@@ -50,12 +50,23 @@ func (s *DirectoryServer) Lookup(ctx context.Context, in *pb.LookupRequest) (*pb
 
 // Ls lists all files in directory
 func (s *DirectoryServer) Ls(ctx context.Context, in *pb.LsRequest) (*pb.LsResponse, error) {
-	log.Println("Receive message body from client")
+	log.Println("Receive ls message body from client")
 	names, err := lib.Ls()
 	if err != nil {
 		log.Fatal("error listing files: ", err)
 	}
 	return &pb.LsResponse{Names: names}, nil
+}
+
+// Rm remove file from directory
+func (s *DirectoryServer) Rm(ctx context.Context, in *pb.RmRequest) (*pb.RmResponse, error) {
+	log.Println("Receive rm message body from client: ", in.Name)
+	err := lib.Rm(in.Name)
+	if err != nil {
+		log.Fatal("error removing file: ", err)
+		return &pb.RmResponse{Status: "Failure"}, err
+	}
+	return &pb.RmResponse{Status: "Success"}, nil
 }
 
 // Read chunks of a file
@@ -83,4 +94,15 @@ func (s *StorageServer) Write(stream pb.StorageService_WriteServer) error {
 		stream.Send(&pb.WriteResponse{Status: "Successfully wrote chunk"})
 	}
 	return nil
+}
+
+// Delete chunks from storage server
+func (s *StorageServer) Delete(ctx context.Context, in *pb.DeleteRequest) (*pb.DeleteResponse, error) {
+	log.Println("Receive delete message from server: ", in.Names)
+	err := storage_util.Delete(in.Names)
+	if err != nil {
+		log.Fatal("error deleting chunks: ", err)
+		return &pb.DeleteResponse{Status: "Failure"}, err
+	}
+	return &pb.DeleteResponse{Status: "Success"}, nil
 }

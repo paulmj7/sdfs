@@ -10,6 +10,10 @@ import (
 	"net/url"
 	"sdfs/services/pb"
 	"strconv"
+	"strings"
+
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 )
 
 // StorageServers struct
@@ -99,8 +103,36 @@ func Ls() ([]string, error) {
 		names[i] = key
 		i++
 	}
-
+	log.Println("names slice: ", names)
 	return names, nil
+}
+
+// Rm remove chunks from storage server
+func Rm(fileName string) error {
+	df := Lookup[fileName]
+
+	m := make(map[url.URL][]string)
+	for _, chunk := range df.Chunks {
+		if _, ok := m[chunk.Location]; !ok || len(Lookup) == 0 {
+			m[chunk.Location] = []string{chunk.Name}
+		} else {
+			m[chunk.Location] = append(m[chunk.Location], chunk.Name)
+		}
+	}
+	log.Println("size: ", len(m))
+	for k, v := range m {
+		var conn *grpc.ClientConn
+		log.Println("url: ", k.String())
+		conn, err := grpc.Dial(":"+strings.Split(k.String(), ":")[2], grpc.WithInsecure())
+		if err != nil {
+			log.Fatal("did not connect: ", err)
+		}
+		defer conn.Close()
+
+		storage := pb.NewStorageServiceClient(conn)
+		storage.Delete(context.Background(), &pb.DeleteRequest{Names: v})
+	}
+	return nil
 }
 
 // DFile struct

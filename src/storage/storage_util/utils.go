@@ -24,3 +24,14 @@ func Read(chunkName string) ([]byte, error) {
 	log.Println("Chunk length: ", len(data))
 	return data, nil
 }
+
+// Delete chunk from storage server
+func Delete(chunkNames []string) error {
+	for _, chunkName := range chunkNames {
+		err := os.Remove(chunkName)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

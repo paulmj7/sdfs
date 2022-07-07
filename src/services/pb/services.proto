@@ -57,14 +57,32 @@ message LsResponse {
     repeated string names = 1;
 }
 
+message RmRequest {
+    string name = 1;
+}
+
+message RmResponse {
+    string status = 1;
+}
+
+message DeleteRequest {
+    repeated string names = 1;
+}
+
+message DeleteResponse {
+    string status = 1;
+}
+
 service DirectoryService {
     rpc Register(RegisterRequest) returns (RegisterResponse) {}
     rpc Create(CreateRequest) returns (CreateResponse) {}
     rpc Lookup(LookupRequest) returns (LookupResponse) {}
     rpc Ls(LsRequest) returns (LsResponse) {}
+    rpc Rm(RmRequest) returns (RmResponse) {}
 }
 
 service StorageService {
     rpc Read(ReadRequest) returns (ReadResponse) {}
     rpc Write(stream WriteRequest) returns (stream WriteResponse) {}
+    rpc Delete(DeleteRequest) returns (DeleteResponse) {}
 }

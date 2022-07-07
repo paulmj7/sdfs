@@ -24,6 +24,7 @@ type storageClientWrapper struct {
 
 // Ls lists all files in directory
 func Ls() {
+	log.Println("HELLO")
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
@@ -32,8 +33,29 @@ func Ls() {
 	defer conn.Close()
 
 	directory := pb.NewDirectoryServiceClient(conn)
-	names, err := directory.Ls(context.Background(), nil)
-	fmt.Println(names)
+	res, err := directory.Ls(context.Background(), &pb.LsRequest{})
+	if err != nil {
+		log.Fatal("error getting files from server: ", err)
+	}
+	fmt.Println(res.Names)
+}
+
+// Rm removes file from directory
+func Rm(fileName string) {
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	if err != nil {
+		log.Fatal("did not connect: ", err)
+	}
+	defer conn.Close()
+
+	directory := pb.NewDirectoryServiceClient(conn)
+	res, err := directory.Rm(context.Background(), &pb.RmRequest{Name: fileName})
+	if err != nil {
+		log.Fatal("error removing file frmo server: ", err)
+	}
+
+	log.Println(res.Status)
 }
 
 // Create file in directory

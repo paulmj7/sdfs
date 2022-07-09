@@ -52,7 +52,7 @@ func Rm(fileName string) {
 	directory := pb.NewDirectoryServiceClient(conn)
 	res, err := directory.Rm(context.Background(), &pb.RmRequest{Name: fileName})
 	if err != nil {
-		log.Fatal("error removing file frmo server: ", err)
+		log.Fatal("error removing file from server: ", err)
 	}
 
 	log.Println(res.Status)

@@ -126,7 +126,6 @@ func Rm(fileName string) error {
 	log.Println("size: ", len(m))
 	for k, v := range m {
 		var conn *grpc.ClientConn
-		log.Println("url: ", k.String())
 		conn, err := grpc.Dial(":"+strings.Split(k.String(), ":")[2], grpc.WithInsecure())
 		if err != nil {
 			log.Fatal("did not connect: ", err)

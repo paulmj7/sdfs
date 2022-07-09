@@ -22,7 +22,6 @@ type StorageServer struct {
 
 // Register a storage server to the directory server
 func (s *DirectoryServer) Register(ctx context.Context, in *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	log.Println("Recieve message body from client: ", in.Url)
 	lib.Directory.Add(in.Url)
 	lib.Directory.PrintDirectory()
 	return &pb.RegisterResponse{Status: "Hello From the Server!"}, nil
@@ -30,7 +29,6 @@ func (s *DirectoryServer) Register(ctx context.Context, in *pb.RegisterRequest) 
 
 // Create a file to the directory server
 func (s *DirectoryServer) Create(ctx context.Context, in *pb.CreateRequest) (*pb.CreateResponse, error) {
-	log.Println("Receive message body from client: ", in.Name, in.Size)
 	locations, err := lib.Create(in.Name, in.Size)
 	if err != nil {
 		log.Fatal("error creating locations: ", err)
@@ -40,7 +38,6 @@ func (s *DirectoryServer) Create(ctx context.Context, in *pb.CreateRequest) (*pb
 
 // Lookup chunk locations of a file
 func (s *DirectoryServer) Lookup(ctx context.Context, in *pb.LookupRequest) (*pb.LookupResponse, error) {
-	log.Println("Receive message body from client: ", in.Name)
 	chunks, err := lib.Search(in.Name)
 	if err != nil {
 		log.Fatal("error searching file: ", err)
@@ -50,7 +47,6 @@ func (s *DirectoryServer) Lookup(ctx context.Context, in *pb.LookupRequest) (*pb
 
 // Ls lists all files in directory
 func (s *DirectoryServer) Ls(ctx context.Context, in *pb.LsRequest) (*pb.LsResponse, error) {
-	log.Println("Receive ls message body from client")
 	names, err := lib.Ls()
 	if err != nil {
 		log.Fatal("error listing files: ", err)
@@ -60,7 +56,6 @@ func (s *DirectoryServer) Ls(ctx context.Context, in *pb.LsRequest) (*pb.LsRespo
 
 // Rm remove file from directory
 func (s *DirectoryServer) Rm(ctx context.Context, in *pb.RmRequest) (*pb.RmResponse, error) {
-	log.Println("Receive rm message body from client: ", in.Name)
 	err := lib.Rm(in.Name)
 	if err != nil {
 		log.Fatal("error removing file: ", err)
@@ -71,7 +66,6 @@ func (s *DirectoryServer) Rm(ctx context.Context, in *pb.RmRequest) (*pb.RmRespo
 
 // Read chunks of a file
 func (s *StorageServer) Read(ctx context.Context, in *pb.ReadRequest) (*pb.ReadResponse, error) {
-	log.Println("Hello from the client: ", in.Name)
 	chunk, err := storage_util.Read(in.Name)
 	if err != nil {
 		log.Fatal("error reading file: ", err)
@@ -81,7 +75,6 @@ func (s *StorageServer) Read(ctx context.Context, in *pb.ReadRequest) (*pb.ReadR
 
 // Write chunks to a file
 func (s *StorageServer) Write(stream pb.StorageService_WriteServer) error {
-	log.Println("Hello From the client")
 	for {
 		in, err := stream.Recv()
 		if err == io.EOF {
@@ -97,7 +90,6 @@ func (s *StorageServer) Write(stream pb.StorageService_WriteServer) error {
 
 // Delete chunks from storage server
 func (s *StorageServer) Delete(ctx context.Context, in *pb.DeleteRequest) (*pb.DeleteResponse, error) {
-	log.Println("Receive delete message from server: ", in.Names)
 	err := storage_util.Delete(in.Names)
 	if err != nil {
 		log.Fatal("error deleting chunks: ", err)
